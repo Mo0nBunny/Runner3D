@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour {
 
     public float playerSpeed = 5f;
+    public static int coinCounter;
+    public  Spawning spawn;
     float xMin = -1f;
     float xMax = 1f;
     float yMin = 0f;
@@ -26,13 +28,11 @@ public class PlayerMovement : MonoBehaviour {
         playerRB = GetComponent<Rigidbody>();
         playerRB.velocity = new Vector3(0f, 0f, playerSpeed);
         float posY = transform.position.y;
-        Debug.Log(transform.position.y);
     }
-
+ 
     // Update is called once per frame
     void Update()
     {
-        //playerRB.velocity = new Vector3(0f, 0f, playerSpeed);
         if (Input.GetKey(KeyCode.A))
         {
             transform.position += Vector3.left * playerSpeed * Time.deltaTime;
@@ -50,16 +50,41 @@ public class PlayerMovement : MonoBehaviour {
             playerRB.AddForce(0f, 5f, 0f, ForceMode.Impulse);
             animator.Play("Jumping");
         }
-        Debug.Log(transform.position.y);
+     
         if (transform.position.y <= 0.1f)
         {
-            Debug.Log(transform.position.y);
             actionIsActive = false;
         }
 
         float newPosX = Mathf.Clamp(transform.position.x, xMin, xMax);
         transform.position = new Vector3(newPosX, transform.position.y, transform.position.z);
 
+    }
+
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.name == "TriggerPoint")
+        {
+            spawn.GetSpawn();
+            Debug.Log("try to spawn");
+        }
+
+        if (other.gameObject.tag == "addPoint")
+        {
+            Destroy(other.gameObject);
+            coinCounter++;
+            Debug.Log(coinCounter);
+        }
+    }
+
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "death")
+        {
+            Destroy(gameObject);
+        }
     }
 
 }
