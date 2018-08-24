@@ -11,6 +11,7 @@ public class Spawning : MonoBehaviour {
     public GameObject obstaclePrefab;
 
     public int randomNum;
+    private int padding = 5;
     float lenghtOfPlatform = 22.8f;
     float minHeight = 0.4f;
     float maxHeight = 1.5f;
@@ -30,25 +31,31 @@ public class Spawning : MonoBehaviour {
         _object.transform.position = firstPosition + new Vector3(0f, 0f, lenghtOfPlatform);
         firstPosition = _object.transform.position;
         lastPosition = firstPosition + new Vector3(0f, 0f, lenghtOfPlatform);
-       
+      
         if (_object != null)
         {
-            randomNum = Random.Range(0, 8);
+            //randomNum = Random.Range(0, 8);
 
-            for (int i = 0; i < randomNum; i++)
+            for (int i = 0; i < 5; i++)
             {
                 GameObject coinObject = Instantiate(coinPrefab) as GameObject;
                 coinObject.transform.position = new Vector3(Random.Range(-1f, 1f), Random.Range(minHeight, maxHeight), Random.Range(firstPosition.z, lastPosition.z));
             }
 
+            GameObject firstObstacleObject = Instantiate(obstaclePrefab) as GameObject;
+            firstObstacleObject.transform.position = new Vector3(Random.Range(-1.2f, 1.2f), 0f, firstPosition.z);
+            Vector3 lastObstacle = firstObstacleObject.transform.position;
+            lastObstacle.z += padding;
+
             for (int i = 0; i < 3; i++)
             {
                 GameObject obstacleObject = Instantiate(obstaclePrefab) as GameObject;
-                obstacleObject.transform.position = new Vector3(Random.Range(-1.2f, 1.2f), 0f, Random.Range(firstPosition.z, lastPosition.z));
+                obstacleObject.transform.position = new Vector3(Random.Range(-1.2f, 1.2f), 0f, lastObstacle.z);
+                lastObstacle.z += padding;
+                
+
             }
         }
-
-
     }
    
 }

@@ -9,5 +9,4 @@ public class Shredder : MonoBehaviour {
         Destroy(other.gameObject);
     }
 
-
 }
