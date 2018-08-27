@@ -1,16 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Stats : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
+    [SerializeField] TextMeshProUGUI coinsCollected;
+
+    void Start () {
+        coinsCollected.text = "Coins:" + PlayerMovement.coinCounter;
+    }
 	
-	// Update is called once per frame
-	void Update () {
-        GetComponent<TextMesh>().text = "Coins:" + PlayerMovement.coinCounter;
-	}
 }

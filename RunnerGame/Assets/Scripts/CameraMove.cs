@@ -14,7 +14,11 @@ public class CameraMove : MonoBehaviour {
 
     void Update()
     {
-        Vector3 position = target.transform.position - offset;
-        this.transform.position = Vector3.Lerp(this.transform.position, position, 1.5f);
+        if (target != null)
+        {
+            Vector3 position = target.transform.position - offset;
+            this.transform.position = Vector3.Lerp(this.transform.position, position, 1.5f);
+        }
+       
     }
 }

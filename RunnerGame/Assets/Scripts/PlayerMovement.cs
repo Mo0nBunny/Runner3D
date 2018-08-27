@@ -1,12 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 public class PlayerMovement : MonoBehaviour {
 
+    [SerializeField] TextMeshProUGUI totalCoins;
     public float playerSpeed = 5f;
     public float jumpForce;
     private bool onGround;
+    private SceneLoader sceneLoader;
+
+
+
+    public static float timeTotal;
+    public Transform deathObj;
+ 
+    
+
+
+
+    public AudioClip coinSound;
+    public AudioClip jumpSound;
+    public AudioClip deathSound;
+
+
+
 
     public static int coinCounter;
     public  Spawning spawn;
@@ -24,11 +45,19 @@ public class PlayerMovement : MonoBehaviour {
         //lane = 0;
         animator = GetComponent<Animator>();
         playerRB = GetComponent<Rigidbody>();
+        coinCounter = 0;
+       
+        totalCoins.text = "Coins:" + PlayerMovement.coinCounter;
         //float posY = transform.position.y;
     }
 
     void Update()
     {
+
+        timeTotal += Time.deltaTime;
+     
+
+
 
         float newPosY = playerRB.velocity.y;
         Vector3 newVel = new Vector3(0f, 0f, playerSpeed);
@@ -52,6 +81,7 @@ public class PlayerMovement : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Space) && (onGround)) 
         {
             playerRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            AudioSource.PlayClipAtPoint(jumpSound, transform.position, 1f);
             Vector3 newPos = playerRB.transform.position;
             animator.Play("Jumping");
             onGround = false;
@@ -68,8 +98,11 @@ public class PlayerMovement : MonoBehaviour {
 
         if (other.gameObject.tag == "addPoint")
         {
+            AudioSource.PlayClipAtPoint(coinSound, transform.position, 1f);
             Destroy(other.gameObject);
             coinCounter++;
+            
+            totalCoins.text = "Coins:" + PlayerMovement.coinCounter;
         }
     }
 
@@ -81,8 +114,17 @@ public class PlayerMovement : MonoBehaviour {
         if (collision.gameObject.tag == "death")
         {
             Destroy(gameObject);
+            AudioSource.PlayClipAtPoint(deathSound, transform.position, 1f);
+            Instantiate(deathObj, transform.position, Quaternion.identity);
+         
+            sceneLoader = GameObject.FindObjectOfType<SceneLoader>();
+            sceneLoader.loadGameOver();
+
+
+
         }
     }
 
+ 
 }
 
