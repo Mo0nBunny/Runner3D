@@ -13,52 +13,36 @@ public class PlayerMovement : MonoBehaviour {
     private bool onGround;
     private SceneLoader sceneLoader;
 
-
-
     public static float timeTotal;
     public Transform deathObj;
- 
-    
-
-
-
     public AudioClip coinSound;
     public AudioClip jumpSound;
     public AudioClip deathSound;
 
-
-
-
     public static int coinCounter;
     public  Spawning spawn;
+    public SwpControl swpControl;
     float xMin = -1f;
     float xMax = 1f;
-   // float yMin = 0f;
-   // float yMax = 1.2f;
+
 
     private Animator animator;
     private Rigidbody playerRB;
-  //  private int lane;
+
   
 
     void Start () {
-        //lane = 0;
         animator = GetComponent<Animator>();
         playerRB = GetComponent<Rigidbody>();
         coinCounter = 0;
        
         totalCoins.text = "Coins:" + PlayerMovement.coinCounter;
-        //float posY = transform.position.y;
     }
 
     void Update()
-    {
-
+    {    
         timeTotal += Time.deltaTime;
      
-
-
-
         float newPosY = playerRB.velocity.y;
         Vector3 newVel = new Vector3(0f, 0f, playerSpeed);
         newVel.y = newPosY;
@@ -77,8 +61,30 @@ public class PlayerMovement : MonoBehaviour {
             transform.position += Vector3.right * playerSpeed * Time.deltaTime;
             animator.Play("Sliding");
         }
-    
+
+             if (Input.touchCount > 0)
+     {
+         Touch touch = Input.GetTouch(0);
+         if (touch.position.x > (Screen.width / 2))
+         {
+                transform.position += Vector3.right * playerSpeed * Time.deltaTime;
+            }
+         if (touch.position.x < (Screen.width / 2))
+         {
+                transform.position += Vector3.left * playerSpeed * Time.deltaTime;
+            }
+     }
+
         if (Input.GetKeyDown(KeyCode.Space) && (onGround)) 
+        {
+            playerRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            AudioSource.PlayClipAtPoint(jumpSound, transform.position, 1f);
+            Vector3 newPos = playerRB.transform.position;
+            animator.Play("Jumping");
+            onGround = false;
+        }
+
+        if(swpControl.SwipeTap && (onGround))
         {
             playerRB.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             AudioSource.PlayClipAtPoint(jumpSound, transform.position, 1f);
@@ -106,10 +112,8 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-
     void OnCollisionEnter(Collision collision)
     {
-
         onGround = true;
         if (collision.gameObject.tag == "death")
         {
@@ -119,12 +123,7 @@ public class PlayerMovement : MonoBehaviour {
          
             sceneLoader = GameObject.FindObjectOfType<SceneLoader>();
             sceneLoader.loadGameOver();
-
-
-
         }
     }
-
- 
 }
 
